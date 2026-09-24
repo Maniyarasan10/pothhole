@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Pothole Detection - Project Info</title>
+<style>
+:root{
+  --bg:#080d16;
+  --card:#111a29;
+  --border:#263348;
+  --text:#ffffff;
+  --muted:#8492a7;
+  --accent:#398cff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  padding:30px 20px;
+  background:var(--card);
+  text-align:center;
+}
+header h1{margin:0 0 6px 0;font-size:26px}
+header p{margin:0;color:var(--muted);font-size:14px}
+main{
+  max-width:720px;
+  margin:0 auto;
+  padding:20px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px;
+  margin-bottom:18px;
+}
+.card h2{margin-top:0;font-size:18px}
+.card p{color:#cdd6e3;line-height:1.6;font-size:14px}
+.pill{
+  display:inline-block;
+  background:#1c2740;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:4px 12px;
+  font-size:12px;
+  color:var(--muted);
+  margin:4px 6px 0 0;
+}
+label{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#0c1220;
+  color:var(--text);
+  font-size:15px;
+  margin-bottom:12px;
+}
+button{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:8px;
+  background:var(--accent);
+  color:white;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+}
+button:active{opacity:0.85}
+.hint{font-size:12px;color:var(--muted);margin-top:10px}
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:30px 20px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚗 Smart Pothole Detection</h1>
+  <p>ESP32 + MPU6050 rule-based road event detector</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>What this is</h2>
+    <p>
+      A standalone ESP32 unit mounted in a vehicle reads acceleration data
+      from an MPU6050 at 100&nbsp;Hz. A small rule engine on the device
+      (drop / rebound / impact / jerk, with speed-bump and rough-road
+      rejection) flags likely potholes in real time, shows the status on
+      an onboard LCD, and serves a live dashboard over its own local WiFi
+      network - no cloud, no internet connection required for the
+      detector itself.
+    </p>
+    <span class="pill">ESP32</span>
+    <span class="pill">MPU6050</span>
+    <span class="pill">Local WiFi dashboard</span>
+    <span class="pill">Rule-based detection</span>
+  </div>
+
+  <div class="card">
+    <h2>Open the live dashboard</h2>
+    <p>
+      This page is static and doesn't talk to the ESP32 directly - it
+      just links you to it. Enter the IP address shown on the device's
+      LCD screen (or its root page) to jump to the live view. You need
+      to be connected to the same network as the ESP32 for this to work.
+    </p>
+
+    <label for="espIp">ESP32 IP address</label>
+    <input
+      id="espIp"
+      type="text"
+      inputmode="decimal"
+      placeholder="e.g. 192.168.43.55"
+      autocomplete="off"
+    >
+
+    <button onclick="goToDashboard()">Open Live Dashboard →</button>
+
+    <p class="hint">
+      The IP is remembered on this device for next time.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Source</h2>
+    <p>
+      Firmware and this page are both in the project repository.
+      Edit the link below to point at your own repo.
+    </p>
+    <a
+      class="pill"
+      style="text-decoration:none;display:inline-block"
+      href="https://github.com/YOUR-USERNAME/YOUR-REPO"
+      target="_blank"
+    >
+      View on GitHub ↗
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  Runs entirely on-device. No data leaves the local network.
+</footer>
+
+<script>
+window.addEventListener("load", function () {
+  var saved = localStorage.getItem("esp32_ip");
+  if (saved) {
+    document.getElementById("espIp").value = saved;
+  }
+});
+
+function goToDashboard() {
+  var ip = document.getElementById("espIp").value.trim();
+
+  if (!ip) {
+    alert("Enter the ESP32's IP address first (shown on its LCD).");
+    return;
+  }
+
+  // strip any protocol/path the user might paste in by mistake
+  ip = ip.replace(/^https?:\/\//i, "").replace(/\/.*$/, "");
+
+  localStorage.setItem("esp32_ip", ip);
+
+  window.location.href = "http://" + ip + "/dashboard";
+}
+</script>
+
+</body>
+</html>
